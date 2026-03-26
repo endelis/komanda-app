@@ -217,3 +217,47 @@ textarea.form-input { min-height: 80px; resize: vertical; }
   display: flex; align-items: center; justify-content: center;
   color: var(--text-muted); font-size: 0.875rem;
 }
+
+/* ─── Animations ─────────────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.2s ease forwards; }
+
+@keyframes shimmer {
+  0%   { opacity: 0.4; }
+  50%  { opacity: 0.7; }
+  100% { opacity: 0.4; }
+}
+.skeleton {
+  background: var(--bg-surface3);
+  border-radius: 4px;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* ─── Empty state ─────────────────────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+}
+.empty-icon {
+  width: 40px; height: 40px;
+  background: var(--bg-surface3);
+  border-radius: 8px;
+  margin: 0 auto 14px;
+}
+.empty-title {
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  max-width: none;
+}
+.empty-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: none;
+}

@@ -5,6 +5,7 @@ import { useCoaches } from '../hooks/useCoaches'
 import { useBranches } from '../hooks/useBranches'
 import { useSeasons } from '../hooks/useSeasons'
 import InviteCoachModal from '../components/admin/InviteCoachModal'
+import InviteParentModal from '../components/players/InviteParentModal'
 import BranchModal from '../components/admin/BranchModal'
 import SeasonModal from '../components/admin/SeasonModal'
 import { supabase } from '../lib/supabase'
@@ -22,6 +23,7 @@ export default function AdminPage() {
   const { seasons, loading: seasonLoading, refetch: refetchSeasons } = useSeasons(selectedBranchId)
 
   const [showInviteCoach, setShowInviteCoach] = useState(false)
+  const [showInviteParent, setShowInviteParent] = useState(false)
   const [showAddBranch, setShowAddBranch] = useState(false)
   const [showAddSeason, setShowAddSeason] = useState(false)
 
@@ -53,7 +55,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="admin-page">
+    <div className="admin-page fade-up">
       <div className="admin-page__header">
         <h1 className="admin-page__title">{t('admin.title')}</h1>
       </div>
@@ -74,15 +76,25 @@ export default function AdminPage() {
       {tab === 'coaches' && (
         <div className="admin-section">
           <div className="admin-section__toolbar">
+            <button className="btn btn--ghost btn--sm" onClick={() => setShowInviteParent(true)}>
+              {t('player.invite_parent')}
+            </button>
             <button className="btn btn--gold btn--sm" onClick={() => setShowInviteCoach(true)}>
               {t('admin.invite_coach')}
             </button>
           </div>
 
           {coachLoading ? (
-            <p className="admin-empty">{t('app.loading')}</p>
+            <div>
+              {[1,2,3].map(i => (
+                <div key={i} className="skeleton" style={{height:'56px',borderRadius:'10px',marginBottom:'8px'}} />
+              ))}
+            </div>
           ) : coaches.length === 0 ? (
-            <p className="admin-empty">{t('admin.coaches_empty')}</p>
+            <div className="empty-state">
+              <div className="empty-icon" />
+              <p className="empty-title">{t('admin.coaches_empty')}</p>
+            </div>
           ) : (
             <div className="admin-list">
               {coaches.map(coach => (
@@ -113,7 +125,7 @@ export default function AdminPage() {
                         {inv.branches?.name ?? '—'} · {inv.age_group ?? t('admin.all_groups')}
                       </span>
                     </div>
-                    <span className="tag-amber">{t('admin.pending_badge')}</span>
+                    <span className="tag tag-amber">{t('admin.pending_badge')}</span>
                   </div>
                 ))}
               </div>
@@ -132,9 +144,16 @@ export default function AdminPage() {
           </div>
 
           {branchLoading ? (
-            <p className="admin-empty">{t('app.loading')}</p>
+            <div>
+              {[1,2].map(i => (
+                <div key={i} className="skeleton" style={{height:'48px',borderRadius:'10px',marginBottom:'8px'}} />
+              ))}
+            </div>
           ) : branches.length === 0 ? (
-            <p className="admin-empty">{t('admin.branches_empty')}</p>
+            <div className="empty-state">
+              <div className="empty-icon" />
+              <p className="empty-title">{t('admin.branches_empty')}</p>
+            </div>
           ) : (
             <div className="admin-list">
               {branches.map(b => (
@@ -166,9 +185,16 @@ export default function AdminPage() {
           </div>
 
           {seasonLoading ? (
-            <p className="admin-empty">{t('app.loading')}</p>
+            <div>
+              {[1,2].map(i => (
+                <div key={i} className="skeleton" style={{height:'56px',borderRadius:'10px',marginBottom:'8px'}} />
+              ))}
+            </div>
           ) : seasons.length === 0 ? (
-            <p className="admin-empty">{t('admin.seasons_empty')}</p>
+            <div className="empty-state">
+              <div className="empty-icon" />
+              <p className="empty-title">{t('admin.seasons_empty')}</p>
+            </div>
           ) : (
             <div className="admin-list">
               {seasons.map(s => (
@@ -181,7 +207,7 @@ export default function AdminPage() {
                   </div>
                   <div className="admin-row__actions">
                     {s.is_current ? (
-                      <span className="tag-green">{t('admin.current_badge')}</span>
+                      <span className="tag tag-green">{t('admin.current_badge')}</span>
                     ) : (
                       <button
                         className="btn btn--sm"
@@ -204,6 +230,9 @@ export default function AdminPage() {
           onClose={() => setShowInviteCoach(false)}
           onSaved={() => { refetchCoaches() }}
         />
+      )}
+      {showInviteParent && (
+        <InviteParentModal onClose={() => setShowInviteParent(false)} />
       )}
 
       {showAddBranch && (

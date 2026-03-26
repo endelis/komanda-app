@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext'
 import { useSeason } from '../hooks/useSeason'
 import { useAttendance } from '../hooks/useAttendance'
 import { getAgeGroup } from '../lib/ageGroup'
+import InviteParentModal from '../components/players/InviteParentModal'
 import './PlayerProfilePage.css'
 
 async function fetchPlayerTests(playerId) {
@@ -46,6 +47,7 @@ export default function PlayerProfilePage() {
   const [loading, setLoading] = useState(true)
   const [testResults, setTestResults] = useState([])
   const [measurements, setMeasurements] = useState([])
+  const [showInviteParent, setShowInviteParent] = useState(false)
 
   const { season } = useSeason(branchId)
   const { getRatio } = useAttendance(branchId, season?.id)
@@ -82,7 +84,14 @@ export default function PlayerProfilePage() {
   }, [player?.id, season?.id])
 
   if (loading) {
-    return <div className="profile-page"><p className="profile-loading">{t('app.loading')}</p></div>
+    return (
+      <div className="profile-page">
+        <div className="skeleton" style={{height:'36px',borderRadius:'6px',marginBottom:'16px',width:'80px'}} />
+        <div className="skeleton" style={{height:'88px',borderRadius:'10px',marginBottom:'12px'}} />
+        <div className="skeleton" style={{height:'120px',borderRadius:'10px',marginBottom:'12px'}} />
+        <div className="skeleton" style={{height:'160px',borderRadius:'10px'}} />
+      </div>
+    )
   }
 
   const ag = getAgeGroup(player.dob)
@@ -90,7 +99,7 @@ export default function PlayerProfilePage() {
   const initials = `${player.fname[0]}${player.lname[0]}`.toUpperCase()
 
   return (
-    <div className="profile-page">
+    <div className="profile-page fade-up">
       <button className="profile-back btn btn--ghost btn--sm" onClick={() => navigate('/team')}>
         ← {t('nav.team')}
       </button>
@@ -109,6 +118,15 @@ export default function PlayerProfilePage() {
               <span className="tag tag-red">{t('player.archived')}</span>
             )}
           </div>
+          {isCoach && (
+            <button
+              className="btn btn--ghost btn--sm"
+              style={{ marginTop: '0.75rem' }}
+              onClick={() => setShowInviteParent(true)}
+            >
+              {t('player.invite_parent')}
+            </button>
+          )}
         </div>
       </div>
 
@@ -158,7 +176,10 @@ export default function PlayerProfilePage() {
       <section className="profile-section card">
         <h2 className="profile-section__title">{t('player.tests_title')}</h2>
         {testResults.length === 0 ? (
-          <p className="profile-empty">{t('player.tests_empty')}</p>
+          <div className="empty-state">
+            <div className="empty-icon" />
+            <p className="empty-title">{t('player.tests_empty')}</p>
+          </div>
         ) : (
           <div className="profile-tests">
             {testResults.map((tr, idx) => {
@@ -200,7 +221,10 @@ export default function PlayerProfilePage() {
       <section className="profile-section card">
         <h2 className="profile-section__title">{t('player.measurements_title')}</h2>
         {measurements.length === 0 ? (
-          <p className="profile-empty">{t('player.measurements_empty')}</p>
+          <div className="empty-state">
+            <div className="empty-icon" />
+            <p className="empty-title">{t('player.measurements_empty')}</p>
+          </div>
         ) : (
           <div className="profile-measurements">
             {measurements.map(m => (
@@ -221,6 +245,10 @@ export default function PlayerProfilePage() {
           </div>
         )}
       </section>
+
+      {showInviteParent && isCoach && (
+        <InviteParentModal onClose={() => setShowInviteParent(false)} />
+      )}
     </div>
   )
 }

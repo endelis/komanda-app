@@ -36,7 +36,11 @@ export default function InviteCoachModal({ branches, onClose, onSaved }) {
     })
 
     setSaving(false)
-    if (err) { setError(t('admin.error_generic')); return }
+    if (err) {
+      console.error('coach_invites insert error:', err)
+      setError(err.message || t('admin.error_generic'))
+      return
+    }
 
     const link = `${window.location.origin}/invite/${token}`
     setInviteLink(link)

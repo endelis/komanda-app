@@ -46,10 +46,11 @@
 }
 
 .home-section__label {
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-family: var(--font-condensed);
+  font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--text-muted);
   margin: 0 0 0.5rem;
 }
@@ -69,8 +70,8 @@
 }
 
 .home-card--hero {
-  background: linear-gradient(135deg, var(--bg-surface2) 0%, var(--bg-surface) 100%);
-  border-color: var(--border2);
+  background: var(--bg-surface2);
+  border-color: var(--accent-border);
 }
 
 .home-card--tournament {
@@ -87,7 +88,7 @@
 }
 
 .home-card__title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-condensed);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -122,7 +123,7 @@
 }
 
 .home-att__pct {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-condensed);
   font-size: 2.25rem;
   font-weight: 700;
   line-height: 1;
@@ -158,7 +159,7 @@
 }
 
 .home-meas-item__val {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-condensed);
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary);

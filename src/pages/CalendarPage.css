@@ -66,19 +66,11 @@
   opacity: 0.55;
 }
 
-/* ─── Colour dot ──────────────────────────────────────────────────────────────── */
-.event-row__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  margin-top: 5px;
-}
-
-.event-dot--training    { background: var(--accent); }
-.event-dot--match       { background: var(--red);    }
-.event-dot--tournament  { background: var(--blue);   }
-.event-dot--measurement { background: var(--green);  }
+/* ─── Event type — left border stripe ────────────────────────────────────────── */
+.event-row--training    { border-left: 3px solid var(--accent); }
+.event-row--match       { border-left: 3px solid var(--red);    }
+.event-row--tournament  { border-left: 3px solid var(--blue);   }
+.event-row--measurement { border-left: 3px solid var(--green);  }
 
 /* ─── Event content ───────────────────────────────────────────────────────────── */
 .event-row__main {

@@ -34,7 +34,7 @@ export default function PerformancePage() {
   const measDates = Object.keys(measByDate).sort((a, b) => b.localeCompare(a))
 
   return (
-    <div className="perf-page">
+    <div className="perf-page fade-up">
       <div className="perf-page__header">
         <h1 className="perf-page__title">{t('performance.title')}</h1>
         <div className="perf-page__actions">
@@ -68,9 +68,16 @@ export default function PerformancePage() {
       {tab === 'tests' && (
         <div className="perf-page__content">
           {testsLoading ? (
-            <p className="perf-page__empty">{t('app.loading')}</p>
+            <div>
+              {[1,2,3].map(i => (
+                <div key={i} className="skeleton" style={{height:'68px',borderRadius:'8px',marginBottom:'12px'}} />
+              ))}
+            </div>
           ) : tests.length === 0 ? (
-            <p className="perf-page__empty">{t('performance.tests_empty')}</p>
+            <div className="empty-state">
+              <div className="empty-icon" />
+              <p className="empty-title">{t('performance.tests_empty')}</p>
+            </div>
           ) : (
             <div className="perf-list">
               {tests.map(test => (
@@ -85,7 +92,7 @@ export default function PerformancePage() {
                     </span>
                   </div>
                   <button
-                    className="btn btn--sm"
+                    className="btn btn--ghost btn--sm"
                     onClick={() => setShowResults(test)}
                   >
                     {t('performance.enter_results')}
@@ -100,9 +107,16 @@ export default function PerformancePage() {
       {tab === 'measurements' && (
         <div className="perf-page__content">
           {measLoading ? (
-            <p className="perf-page__empty">{t('app.loading')}</p>
+            <div>
+              {[1,2].map(i => (
+                <div key={i} className="skeleton" style={{height:'80px',borderRadius:'8px',marginBottom:'12px'}} />
+              ))}
+            </div>
           ) : measDates.length === 0 ? (
-            <p className="perf-page__empty">{t('performance.measurements_empty')}</p>
+            <div className="empty-state">
+              <div className="empty-icon" />
+              <p className="empty-title">{t('performance.measurements_empty')}</p>
+            </div>
           ) : (
             <div className="perf-list">
               {measDates.map(date => {

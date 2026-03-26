@@ -49,8 +49,27 @@ export default function HomePage() {
   const { data, loading } = useHomeData(playerId, branchId, season?.id)
   const [tab, setTab] = useState('overview')
 
-  if (loading || !data) {
-    return <div className="home-page"><p className="home-loading">{t('app.loading')}</p></div>
+  if (loading) {
+    return (
+      <div className="home-page">
+        <div className="skeleton" style={{height:'32px',borderRadius:'4px',marginBottom:'16px',width:'160px'}} />
+        <div className="skeleton" style={{height:'96px',borderRadius:'12px',marginBottom:'12px'}} />
+        <div className="skeleton" style={{height:'72px',borderRadius:'12px',marginBottom:'12px'}} />
+        <div className="skeleton" style={{height:'72px',borderRadius:'12px'}} />
+      </div>
+    )
+  }
+
+  if (!data) {
+    return (
+      <div className="home-page fade-up">
+        <div className="empty-state">
+          <div className="empty-icon" />
+          <p className="empty-title">{t('home.no_children_title')}</p>
+          <p className="empty-sub">{t('home.no_children')}</p>
+        </div>
+      </div>
+    )
   }
 
   const { nextTraining, nextTournament, attendanceRatio, attendanceSessions,
@@ -66,7 +85,7 @@ export default function HomePage() {
   const prevHeight   = prev[0]?.height_cm ?? null
 
   return (
-    <div className="home-page">
+    <div className="home-page fade-up">
       <div className="home-page__tabs">
         {['overview', 'schedule', 'progress'].map(key => (
           <button

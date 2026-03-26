@@ -1,0 +1,159 @@
+/* ─── Wide card for step 2 (player roster) ───────────────────── */
+.auth-card--wide {
+  max-width: 520px;
+}
+
+/* ─── Step indicator ─────────────────────────────────────────── */
+.invite-steps {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.invite-steps__step {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-condensed);
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--bg-surface3);
+  color: var(--text-dim);
+  flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+}
+
+.invite-steps__step--active {
+  background: var(--accent);
+  color: #0C0C0C;
+}
+
+.invite-steps__step--done {
+  background: var(--green);
+  color: #fff;
+}
+
+.invite-steps__line {
+  flex: 1;
+  height: 1px;
+  background: var(--border2);
+}
+
+/* ─── Player roster list ─────────────────────────────────────── */
+.invite-player-list {
+  display: flex;
+  flex-direction: column;
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  overflow-y: auto;
+  max-height: 300px;
+  margin-bottom: 0.75rem;
+}
+
+.invite-player-row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-surface);
+  border: none;
+  border-bottom: 0.5px solid var(--border);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition);
+  min-height: 52px;
+}
+
+.invite-player-row:last-child {
+  border-bottom: none;
+}
+
+.invite-player-row:hover:not(:disabled) {
+  background: var(--bg-surface2);
+}
+
+.invite-player-row--selected {
+  background: var(--accent-dim);
+}
+
+.invite-player-row:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.invite-player-row__check {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: transparent;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.invite-player-row--selected .invite-player-row__check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0C0C0C;
+}
+
+.invite-player-row__info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.invite-player-row__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── Max-children warning ───────────────────────────────────── */
+.invite-max-notice {
+  font-size: 0.8125rem;
+  color: var(--amber);
+  margin-bottom: 0.625rem;
+  max-width: none;
+}
+
+/* ─── Step 2 footer (two buttons) ───────────────────────────── */
+.invite-step2-footer {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.invite-step2-footer .btn {
+  flex: 1;
+}
+
+/* ─── Back link ──────────────────────────────────────────────── */
+.invite-back-link {
+  display: block;
+  margin-top: 1rem;
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+  text-align: center;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.invite-back-link:hover {
+  color: var(--text-muted);
+}

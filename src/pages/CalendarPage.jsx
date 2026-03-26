@@ -56,7 +56,7 @@ export default function CalendarPage() {
   const grouped = groupByMonth(events)
 
   return (
-    <div className="calendar-page">
+    <div className="calendar-page fade-up">
       <div className="calendar-page__header">
         <h1 className="calendar-page__title">{t('calendar.title')}</h1>
         {canWrite && (
@@ -67,9 +67,16 @@ export default function CalendarPage() {
       </div>
 
       {loading ? (
-        <p className="calendar-empty">{t('app.loading')}</p>
+        <div className="empty-state">
+          <div className="skeleton" style={{height:'52px',borderRadius:'10px',marginBottom:'8px'}} />
+          <div className="skeleton" style={{height:'52px',borderRadius:'10px',marginBottom:'8px'}} />
+          <div className="skeleton" style={{height:'52px',borderRadius:'10px'}} />
+        </div>
       ) : grouped.length === 0 ? (
-        <p className="calendar-empty">{t('calendar.empty')}</p>
+        <div className="empty-state">
+          <div className="empty-icon" />
+          <p className="empty-title">{t('calendar.empty')}</p>
+        </div>
       ) : (
         grouped.map(([monthKey, monthEvents]) => (
           <section key={monthKey} className="calendar-month">
@@ -78,9 +85,8 @@ export default function CalendarPage() {
               {monthEvents.map((ev, i) => (
                 <li
                   key={ev.id}
-                  className={`event-row${ev.cancelled ? ' event-row--cancelled' : ''}${i < monthEvents.length - 1 ? ' event-row--bordered' : ''}`}
+                  className={`event-row event-row--${ev.type}${ev.cancelled ? ' event-row--cancelled' : ''}${i < monthEvents.length - 1 ? ' event-row--bordered' : ''}`}
                 >
-                  <span className={`event-row__dot event-dot--${ev.type}`} aria-hidden="true" />
 
                   <div className="event-row__main">
                     <div className="event-row__top">

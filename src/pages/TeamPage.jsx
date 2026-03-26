@@ -7,6 +7,7 @@ import { useSeason } from '../hooks/useSeason'
 import { useAttendance } from '../hooks/useAttendance'
 import { getAgeGroup } from '../lib/ageGroup'
 import AddPlayerModal from '../components/players/AddPlayerModal'
+import InviteParentModal from '../components/players/InviteParentModal'
 import './TeamPage.css'
 
 const AGE_GROUPS = ['U8', 'U10', 'U12', 'U14', 'U16', 'U18']
@@ -30,6 +31,7 @@ export default function TeamPage() {
   const [search, setSearch] = useState('')
   const [ageFilter, setAgeFilter] = useState(null) // null = all
   const [showAdd, setShowAdd] = useState(false)
+  const [showInviteParent, setShowInviteParent] = useState(false)
 
   const canWrite = role === 'coach' || role === 'superadmin'
 
@@ -43,13 +45,18 @@ export default function TeamPage() {
   const loading = playersLoading || attLoading
 
   return (
-    <div className="team-page">
+    <div className="team-page fade-up">
       <div className="team-page__header">
         <h1 className="team-page__title">{t('team.title')}</h1>
         {canWrite && (
-          <button className="btn btn--gold btn--sm" onClick={() => setShowAdd(true)}>
-            + {t('team.add_player')}
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="btn btn--ghost btn--sm" onClick={() => setShowInviteParent(true)}>
+              {t('player.invite_parent')}
+            </button>
+            <button className="btn btn--gold btn--sm" onClick={() => setShowAdd(true)}>
+              + {t('team.add_player')}
+            </button>
+          </div>
         )}
       </div>
 
@@ -81,11 +88,18 @@ export default function TeamPage() {
       </div>
 
       {loading ? (
-        <p className="team-page__empty">{t('app.loading')}</p>
+        <div>
+          {[1,2,3,4].map(i => (
+            <div key={i} className="skeleton" style={{height:'60px',borderRadius:'10px',marginBottom:'8px'}} />
+          ))}
+        </div>
       ) : filtered.length === 0 ? (
-        <p className="team-page__empty">
-          {search || ageFilter ? t('team.empty_search') : t('team.empty')}
-        </p>
+        <div className="empty-state">
+          <div className="empty-icon" />
+          <p className="empty-title">
+            {search || ageFilter ? t('team.empty_search') : t('team.empty')}
+          </p>
+        </div>
       ) : (
         <ul className="player-list">
           {filtered.map(p => {
@@ -121,6 +135,9 @@ export default function TeamPage() {
           onClose={() => setShowAdd(false)}
           onSaved={refetch}
         />
+      )}
+      {showInviteParent && canWrite && (
+        <InviteParentModal onClose={() => setShowInviteParent(false)} />
       )}
     </div>
   )

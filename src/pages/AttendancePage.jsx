@@ -175,7 +175,7 @@ export default function AttendancePage() {
   const loading = evLoading || plLoading
 
   return (
-    <div className="attendance-page">
+    <div className="attendance-page fade-up">
       <div className="attendance-page__header">
         <h1 className="attendance-page__title">{t('attendance.title')}</h1>
         {season && (
@@ -184,9 +184,16 @@ export default function AttendancePage() {
       </div>
 
       {loading ? (
-        <p className="attendance-empty">{t('app.loading')}</p>
+        <div>
+          {[1,2,3].map(i => (
+            <div key={i} className="skeleton" style={{height:'56px',borderRadius:'10px',marginBottom:'10px'}} />
+          ))}
+        </div>
       ) : sessions.length === 0 ? (
-        <p className="attendance-empty">{t('attendance.empty')}</p>
+        <div className="empty-state">
+          <div className="empty-icon" />
+          <p className="empty-title">{t('attendance.empty')}</p>
+        </div>
       ) : (
         <div className="session-list">
           {sessions.map(ev => (

@@ -1,5 +1,5 @@
 .perf-page {
-  padding: 2rem;
+  padding: var(--sp);
   max-width: 800px;
 }
 
@@ -11,7 +11,7 @@
 }
 
 .perf-page__title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-condensed);
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -178,7 +178,7 @@
 }
 
 .perf-modal__title {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-condensed);
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-primary);
