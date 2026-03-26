@@ -1,0 +1,331 @@
+.home-page {
+  padding: 1.5rem 2rem;
+  max-width: 560px;
+}
+
+.home-loading {
+  color: var(--text-muted);
+  padding: 2rem 0;
+}
+
+/* Tabs */
+.home-page__tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.home-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.625rem 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.home-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.home-tab:hover:not(.active) {
+  color: var(--text-primary);
+}
+
+/* Section */
+.home-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.home-section__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem;
+}
+
+.home-empty {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  padding: 0.5rem 0;
+}
+
+/* Cards */
+.home-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.home-card--hero {
+  background: linear-gradient(135deg, var(--bg-surface2) 0%, var(--bg-surface) 100%);
+  border-color: var(--border2);
+}
+
+.home-card--tournament {
+  border-color: var(--blue);
+}
+
+.home-card__eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin: 0 0 0.5rem;
+}
+
+.home-card__title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem;
+  line-height: 1.2;
+}
+
+.home-card__title--empty {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.home-card__sub {
+  font-size: 0.9375rem;
+  color: var(--accent);
+  font-weight: 500;
+  margin: 0 0 0.25rem;
+}
+
+.home-card__loc {
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+/* Attendance */
+.home-att {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.home-att__pct {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.home-att__pct--green { color: var(--green); }
+.home-att__pct--amber { color: var(--amber); }
+.home-att__pct--red   { color: var(--red);   }
+.home-att__pct--none  { color: var(--text-muted); }
+
+.home-att__sessions {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* Measurements summary */
+.home-meas-row {
+  display: flex;
+  gap: 2rem;
+}
+
+.home-meas-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.home-meas-item__label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.home-meas-item__val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.home-meas-item__delta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.home-meas-item__delta.pos { color: var(--green); }
+.home-meas-item__delta.neg { color: var(--red);   }
+
+/* Schedule tab */
+.home-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.home-event-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 0.875rem 1.125rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.home-event-row:last-child {
+  border-bottom: none;
+}
+
+.home-event-row__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.375rem;
+}
+
+.home-event-row__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.home-event-row__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.home-event-row__meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.home-event-row__loc {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+/* Progress — tests */
+.home-tests {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.home-test-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.125rem;
+}
+
+.home-test-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.625rem;
+}
+
+.home-test-card__name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.home-test-card__date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.home-test-card__metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.home-metric-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.home-metric-row__name {
+  flex: 1;
+  color: var(--text-muted);
+}
+
+.home-metric-row__val {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.home-metric-row__delta {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  min-width: 48px;
+  text-align: right;
+}
+
+.home-metric-row__delta.pos { color: var(--green); }
+.home-metric-row__delta.neg { color: var(--red);   }
+
+/* Measurements history */
+.home-meas-history {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.home-meas-hist-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 1.125rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+
+.home-meas-hist-row:last-child {
+  border-bottom: none;
+}
+
+.home-meas-hist-row__date {
+  color: var(--text-muted);
+}
+
+.home-meas-hist-row__vals {
+  display: flex;
+  gap: 1rem;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    padding: 1rem;
+  }
+}

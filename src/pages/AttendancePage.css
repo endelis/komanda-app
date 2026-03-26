@@ -1,0 +1,258 @@
+.attendance-page {
+  padding: var(--sp);
+  max-width: 860px;
+}
+
+.attendance-page__header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.attendance-page__title {
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.attendance-page__season {
+  font-family: var(--font-condensed);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.attendance-empty {
+  color: var(--text-dim);
+  font-size: 0.9375rem;
+  padding: 3rem 0;
+  max-width: none;
+}
+
+/* ─── Session list ───────────────────────────────────────────────────────────── */
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+/* ─── Session card ───────────────────────────────────────────────────────────── */
+.session-card {
+  overflow: visible;
+}
+
+.session-card__header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 10px;
+  transition: background var(--transition);
+  min-height: 56px;
+}
+
+.session-card__header:hover {
+  background: var(--bg-surface2);
+}
+
+.session-card--open .session-card__header {
+  border-bottom: 0.5px solid var(--border);
+  border-radius: 10px 10px 0 0;
+}
+
+.session-card__left {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.session-card__name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.session-card__location {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.session-card__right {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  flex-shrink: 0;
+}
+
+.session-card__date {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.session-card__summary {
+  font-family: var(--font-condensed);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+  min-width: 36px;
+  text-align: right;
+}
+
+.session-card__chevron {
+  color: var(--text-dim);
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform var(--transition);
+  display: inline-block;
+  transform: rotate(0deg);
+}
+
+.session-card__chevron.open {
+  transform: rotate(90deg);
+}
+
+/* ─── Player rows ────────────────────────────────────────────────────────────── */
+.session-players {
+  padding: 0.5rem 0;
+}
+
+.session-players__loading {
+  padding: 1rem 1rem;
+  color: var(--text-dim);
+  font-size: 0.875rem;
+  max-width: none;
+}
+
+.att-row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.5rem 1rem;
+  min-height: 52px;
+  transition: background var(--transition);
+}
+
+.att-row:hover {
+  background: var(--bg-surface2);
+}
+
+.att-row__info {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.att-row__name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.att-row__name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.att-row__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-shrink: 0;
+}
+
+/* ─── Status buttons ─────────────────────────────────────────────────────────── */
+.att-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.att-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font-condensed);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.att-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.att-btn:not(:disabled):hover {
+  border-color: var(--border2);
+  background: var(--bg-surface3);
+  color: var(--text-primary);
+}
+
+.att-btn--green.active  { background: var(--green-dim);  color: var(--green);  border-color: var(--green);  }
+.att-btn--red.active    { background: var(--red-dim);    color: var(--red);    border-color: var(--red);    }
+.att-btn--amber.active  { background: var(--amber-dim);  color: var(--amber);  border-color: var(--amber);  }
+.att-btn--blue.active   { background: var(--blue-dim);   color: var(--blue);   border-color: var(--blue);   }
+
+/* ─── Note input ─────────────────────────────────────────────────────────────── */
+.att-note {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 6px 10px;
+  font-size: 0.8125rem;
+  outline: none;
+  width: 140px;
+  min-height: 36px;
+  transition: border-color var(--transition);
+}
+
+.att-note:focus {
+  border-color: var(--accent);
+}
+
+.att-note::placeholder {
+  color: var(--text-dim);
+}
+
+@media (max-width: 600px) {
+  .attendance-page { padding: 1rem; }
+  .session-card__location { display: none; }
+  .att-note { width: 100px; }
+}
+
+@media (max-width: 420px) {
+  .att-note { display: none; }
+  .session-card__date { font-size: 0.75rem; }
+}

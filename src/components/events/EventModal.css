@@ -1,0 +1,60 @@
+.event-type-selector {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.event-type-btn {
+  padding: 5px 14px;
+  border-radius: 100px;
+  border: 1px solid var(--border2);
+  background: transparent;
+  font-family: var(--font-condensed);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--text-muted);
+  min-height: 32px;
+  transition: color var(--transition), background var(--transition), border-color var(--transition);
+}
+
+.event-type-btn--training.active  { background: var(--accent-dim);  color: var(--accent); border-color: var(--accent-border); }
+.event-type-btn--match.active     { background: var(--red-dim);     color: var(--red);    border-color: var(--red);    }
+.event-type-btn--tournament.active{ background: var(--blue-dim);    color: var(--blue);   border-color: var(--blue);   }
+.event-type-btn--measurement.active{ background: var(--green-dim);  color: var(--green);  border-color: var(--green);  }
+
+/* Cancel event section */
+.event-cancel-section {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 0.5px solid var(--border);
+}
+
+.event-cancel-trigger {
+  background: none;
+  border: none;
+  color: var(--red);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+  transition: opacity var(--transition);
+}
+
+.event-cancel-trigger:hover { opacity: 1; }
+
+.event-cancel-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.event-cancel-form .btn--danger {
+  align-self: flex-start;
+}

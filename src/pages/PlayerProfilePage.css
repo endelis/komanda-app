@@ -1,0 +1,234 @@
+.profile-page {
+  padding: var(--sp);
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-back {
+  align-self: flex-start;
+  margin-bottom: 0.25rem;
+}
+
+.profile-loading {
+  color: var(--text-dim);
+  font-size: 0.9375rem;
+  max-width: none;
+}
+
+/* ─── Header card ─────────────────────────────────────────────────────────────── */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.profile-header__avatar {
+  flex-shrink: 0;
+}
+
+.profile-header__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-header__name {
+  font-family: var(--font-condensed);
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.profile-header__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.profile-header__att {
+  font-family: var(--font-condensed);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ─── Sections ───────────────────────────────────────────────────────────────── */
+.profile-section {
+  padding: 1.25rem;
+}
+
+.profile-section__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.profile-section__title {
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.profile-section__header .profile-section__title {
+  margin-bottom: 0;
+}
+
+/* ─── Contact rows ───────────────────────────────────────────────────────────── */
+.profile-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.contact-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.contact-row__label {
+  font-family: var(--font-condensed);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.contact-row__value {
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  max-width: none;
+}
+
+.contact-row__phone {
+  font-size: 0.9375rem;
+  color: var(--accent);
+  font-weight: 500;
+  max-width: none;
+}
+
+.contact-row__phone:hover {
+  text-decoration: underline;
+}
+
+/* ─── Medical ─────────────────────────────────────────────────────────────────── */
+.profile-medical {
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-width: none;
+}
+
+.profile-empty {
+  font-size: 0.875rem;
+  color: var(--text-dim);
+  max-width: none;
+}
+
+/* ─── Tests ───────────────────────────────────────────────────────────────────── */
+.profile-tests {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-test {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+.profile-test__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.profile-test__name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.profile-test__date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.profile-metric {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+  padding: 0.2rem 0;
+}
+
+.profile-metric__name {
+  flex: 1;
+  color: var(--text-muted);
+}
+
+.profile-metric__val {
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.profile-metric__delta {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  min-width: 48px;
+  text-align: right;
+}
+
+.profile-metric__delta.pos { color: var(--green); }
+.profile-metric__delta.neg { color: var(--red);   }
+
+/* ─── Measurements ────────────────────────────────────────────────────────────── */
+.profile-measurements {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-meas-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+
+.profile-meas-row:last-child {
+  border-bottom: none;
+}
+
+.profile-meas-row__date {
+  color: var(--text-muted);
+}
+
+.profile-meas-row__vals {
+  display: flex;
+  gap: 1rem;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 480px) {
+  .profile-page { padding: 1rem; }
+  .contact-row { flex-direction: column; gap: 0.2rem; }
+  .contact-row__label { min-width: unset; }
+}
