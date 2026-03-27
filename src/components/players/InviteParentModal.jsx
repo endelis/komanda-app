@@ -39,7 +39,11 @@ export default function InviteParentModal({ playerId, onClose }) {
     setSubmitting(false)
 
     if (insertError) {
-      setError(t('invite_parent.error_generic'))
+      console.error('Invite error full:', insertError)
+      console.error('Invite error message:', insertError?.message)
+      console.error('Invite error code:', insertError?.code)
+      console.error('Invite error details:', insertError?.details)
+      setError(insertError?.message || t('invite_parent.error_generic'))
       return
     }
 
