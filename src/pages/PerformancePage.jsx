@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
+import { formatShort } from '../lib/date'
 import { useSeason } from '../hooks/useSeason'
 import { useTests } from '../hooks/useTests'
 import { useMeasurements } from '../hooks/useMeasurements'
@@ -85,7 +86,7 @@ export default function PerformancePage() {
                   <div className="perf-card__info">
                     <span className="perf-card__name">{test.name}</span>
                     <span className="perf-card__date">
-                      {new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(test.date))}
+                      {formatShort(test.date)}
                     </span>
                     <span className="perf-card__metrics">
                       {(test.metrics || []).map(m => m.name).join(' · ')}
@@ -124,7 +125,7 @@ export default function PerformancePage() {
                 return (
                   <div key={date} className="meas-group">
                     <div className="meas-group__date">
-                      {new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(date))}
+                      {formatShort(date)}
                     </div>
                     <div className="meas-group__rows">
                       {rows.map(m => {

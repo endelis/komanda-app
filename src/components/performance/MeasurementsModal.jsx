@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
+import { today } from '../../lib/date'
 
 export default function MeasurementsModal({ branchId, seasonId, players, onClose, onSaved }) {
   const { t } = useTranslation()
   const { user } = useAuth()
 
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [date, setDate] = useState(today())
   // rows[playerId] = { weight: '', height: '' }
   const [rows, setRows] = useState(() => {
     const init = {}

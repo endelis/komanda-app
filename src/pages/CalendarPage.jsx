@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { useSeason } from '../hooks/useSeason'
 import { useEvents } from '../hooks/useEvents'
 import EventModal from '../components/events/EventModal'
+import { formatDate, formatMonthYear } from '../lib/date'
 import './CalendarPage.css'
 
 const TYPE_TAG = {
@@ -16,21 +17,6 @@ const TYPE_TAG = {
 function formatTime(time) {
   if (!time) return null
   return time.slice(0, 5) // "HH:MM"
-}
-
-function formatDate(dateStr, locale) {
-  const d = new Date(dateStr + 'T00:00:00')
-  return d.toLocaleDateString(locale === 'lv' ? 'lv-LV' : 'en-GB', {
-    weekday: 'short', day: 'numeric', month: 'short',
-  })
-}
-
-function monthLabel(key, locale) {
-  const [year, month] = key.split('-')
-  const d = new Date(Number(year), Number(month) - 1, 1)
-  return d.toLocaleDateString(locale === 'lv' ? 'lv-LV' : 'en-GB', {
-    month: 'long', year: 'numeric',
-  })
 }
 
 function groupByMonth(events) {
@@ -80,7 +66,7 @@ export default function CalendarPage() {
       ) : (
         grouped.map(([monthKey, monthEvents]) => (
           <section key={monthKey} className="calendar-month">
-            <h2 className="calendar-month__label">{monthLabel(monthKey, locale)}</h2>
+            <h2 className="calendar-month__label">{formatMonthYear(monthKey + '-01', locale)}</h2>
             <ul className="event-list card">
               {monthEvents.map((ev, i) => (
                 <li

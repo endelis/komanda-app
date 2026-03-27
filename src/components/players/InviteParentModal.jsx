@@ -4,15 +4,17 @@ import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
 import './InviteParentModal.css'
 
-export default function InviteParentModal({ onClose }) {
+// playerId is required — parent invites must target a specific player.
+// The invite acceptance flow auto-links the parent to that player.
+export default function InviteParentModal({ playerId, onClose }) {
   const { t } = useTranslation()
-  const { user, clubId } = useAuth()
+  const { user } = useAuth()
 
-  const [email, setEmail]         = useState('')
+  const [email,      setEmail]      = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [error, setError]         = useState(null)
+  const [error,      setError]      = useState(null)
   const [inviteLink, setInviteLink] = useState(null)
-  const [copied, setCopied]       = useState(false)
+  const [copied,     setCopied]     = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -26,11 +28,10 @@ export default function InviteParentModal({ onClose }) {
     const expiresAt = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString()
 
     const { error: insertError } = await supabase.from('invites').insert({
+      player_id:     playerId,
       invited_email: trimmedEmail,
       role:          'parent',
-      player_id:     null,
       invited_by:    user.id,
-      club_id:       clubId,
       token,
       expires_at:    expiresAt,
     })

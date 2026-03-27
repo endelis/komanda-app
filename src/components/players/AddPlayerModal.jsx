@@ -1,21 +1,45 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
+import InviteParentModal from './InviteParentModal'
 import '../../components/auth/LoginModal.css'
 
 export default function AddPlayerModal({ branchId, onClose, onSaved }) {
   const { t } = useTranslation()
-  const { user } = useAuth()
+  const { user, clubId } = useAuth()
+
+  // Branch selector — loaded from Supabase, pre-selected from prop
+  const [branches, setBranches] = useState([])
+  const [selectedBranchId, setSelectedBranchId] = useState(branchId ?? '')
+
+  useEffect(() => {
+    if (!clubId) return
+    supabase
+      .from('branches')
+      .select('id, name')
+      .eq('club_id', clubId)
+      .order('name')
+      .then(({ data }) => {
+        setBranches(data ?? [])
+        if (!branchId && data?.length) {
+          setSelectedBranchId(data[0].id)
+        }
+      })
+  }, [clubId, branchId])
 
   const [form, setForm] = useState({
     fname: '', lname: '', dob: '',
     guardian_name: '', guardian_phone: '',
     player_phone: '', medical_notes: '', notes: '',
   })
-  const [gdpr, setGdpr] = useState(false)
-  const [error, setError] = useState(null)
-  const [submitting, setSubmitting] = useState(false)
+  const [gdpr,        setGdpr]        = useState(false)
+  const [error,       setError]       = useState(null)
+  const [submitting,  setSubmitting]  = useState(false)
+
+  // After save: show "invite parent?" prompt
+  const [savedPlayerId,   setSavedPlayerId]   = useState(null)
+  const [showInviteModal, setShowInviteModal] = useState(false)
 
   function set(field, value) {
     setForm(f => ({ ...f, [field]: value }))
@@ -25,6 +49,11 @@ export default function AddPlayerModal({ branchId, onClose, onSaved }) {
     e.preventDefault()
     setError(null)
 
+    if (!selectedBranchId) {
+      setError(t('player.error_branch'))
+      return
+    }
+
     // GDPR gate — mandatory, non-negotiable
     if (!gdpr) {
       setError(t('player.error_gdpr'))
@@ -33,20 +62,25 @@ export default function AddPlayerModal({ branchId, onClose, onSaved }) {
 
     setSubmitting(true)
 
-    const { error: insertError } = await supabase.from('players').insert({
-      fname: form.fname.trim(),
-      lname: form.lname.trim(),
-      dob: form.dob,
-      branch_id: branchId,
-      guardian_name:   form.guardian_name.trim()   || null,
-      guardian_phone:  form.guardian_phone.trim()  || null,
-      player_phone:    form.player_phone.trim()     || null,
-      medical_notes:   form.medical_notes.trim()    || null,
-      notes:           form.notes.trim()            || null,
-      gdpr_consent_confirmed: true,
-      gdpr_consent_date: new Date().toISOString(),
-      created_by: user.id,
-    })
+    const { data: inserted, error: insertError } = await supabase
+      .from('players')
+      .insert({
+        fname:                   form.fname.trim(),
+        lname:                   form.lname.trim(),
+        dob:                     form.dob,
+        branch_id:               selectedBranchId,
+        assigned_coach_id:       user.id,
+        guardian_name:           form.guardian_name.trim()   || null,
+        guardian_phone:          form.guardian_phone.trim()  || null,
+        player_phone:            form.player_phone.trim()     || null,
+        medical_notes:           form.medical_notes.trim()    || null,
+        notes:                   form.notes.trim()            || null,
+        gdpr_consent_confirmed:  true,
+        gdpr_consent_date:       new Date().toISOString(),
+        created_by:              user.id,
+      })
+      .select('id')
+      .single()
 
     setSubmitting(false)
 
@@ -55,12 +89,49 @@ export default function AddPlayerModal({ branchId, onClose, onSaved }) {
       return
     }
 
-    onSaved()
-    onClose()
+    onSaved() // trigger list refetch in parent
+
+    // Show "invite parent?" prompt instead of closing immediately
+    setSavedPlayerId(inserted.id)
   }
 
   function handleOverlay(e) {
     if (e.target === e.currentTarget) onClose()
+  }
+
+  // Post-save prompt: offer to send parent invite immediately
+  if (savedPlayerId) {
+    return (
+      <>
+        <div className="modal-overlay" onClick={handleOverlay}>
+          <div className="modal" style={{ maxWidth: 400 }} role="dialog" aria-modal="true">
+            <h2 className="modal__title">{t('player.added_ok')}</h2>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', margin: '0 0 1.5rem' }}>
+              {t('player.invite_parent')}?
+            </p>
+            <div className="modal__footer">
+              <button type="button" className="modal__forgot" onClick={onClose}>
+                {t('player.invite_later')}
+              </button>
+              <button
+                type="button"
+                className="btn btn--gold"
+                onClick={() => setShowInviteModal(true)}
+              >
+                {t('player.invite_parent_now')}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {showInviteModal && (
+          <InviteParentModal
+            playerId={savedPlayerId}
+            onClose={onClose}
+          />
+        )}
+      </>
+    )
   }
 
   return (
@@ -70,6 +141,25 @@ export default function AddPlayerModal({ branchId, onClose, onSaved }) {
         <h2 className="modal__title">{t('player.add_title')}</h2>
 
         <form onSubmit={handleSubmit} noValidate>
+          {/* Branch selector — always loaded from Supabase */}
+          <div className="form-group">
+            <label className="form-label" htmlFor="branch">{t('player.branch')}</label>
+            <select
+              id="branch"
+              className="form-input"
+              value={selectedBranchId}
+              onChange={e => setSelectedBranchId(e.target.value)}
+              required
+            >
+              {!selectedBranchId && (
+                <option value="">{t('player.select_branch')}</option>
+              )}
+              {branches.map(b => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
+            </select>
+          </div>
+
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 1rem' }}>
             <div className="form-group">
               <label className="form-label" htmlFor="fname">{t('player.fname')}</label>

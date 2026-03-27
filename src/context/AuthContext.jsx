@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext(null)
@@ -7,42 +7,22 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [role, setRole] = useState(null)
   const [clubId, setClubId] = useState(null)
+  const [clubName, setClubName] = useState(null)
   const [branchId, setBranchId] = useState(null)
   const [playerId, setPlayerId] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        fetchProfile(session.user.id)
-      } else {
-        setLoading(false)
-      }
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      if (!session?.user) {
-        setRole(null)
-        setClubId(null)
-        setBranchId(null)
-        setLoading(false)
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  async function fetchProfile(userId) {
+  const fetchProfile = useCallback(async (userId) => {
+    // Join clubs so we get club_name in one query
     const { data } = await supabase
       .from('users')
-      .select('role, club_id')
+      .select('role, club_id, clubs(name)')
       .eq('id', userId)
       .single()
 
     setRole(data?.role ?? null)
     setClubId(data?.club_id ?? null)
+    setClubName(data?.clubs?.name ?? null)
 
     // Fetch primary branch from coach_access (first assigned branch)
     if (data?.role === 'coach') {
@@ -68,6 +48,36 @@ export function AuthProvider({ children }) {
     }
 
     setLoading(false)
+  }, [])
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      if (session?.user) {
+        fetchProfile(session.user.id)
+      } else {
+        setLoading(false)
+      }
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      if (!session?.user) {
+        setRole(null)
+        setClubId(null)
+        setClubName(null)
+        setBranchId(null)
+        setLoading(false)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [fetchProfile])
+
+  // Re-fetch profile without full reload — used after club setup
+  async function refreshProfile() {
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    if (currentUser) await fetchProfile(currentUser.id)
   }
 
   async function signIn(email, password) {
@@ -76,13 +86,14 @@ export function AuthProvider({ children }) {
 
     const { data: profile } = await supabase
       .from('users')
-      .select('role, club_id')
+      .select('role, club_id, clubs(name)')
       .eq('id', data.user.id)
       .single()
 
     const userRole = profile?.role ?? null
     setRole(userRole)
     setClubId(profile?.club_id ?? null)
+    setClubName(profile?.clubs?.name ?? null)
     return { error: null, role: userRole }
   }
 
@@ -91,12 +102,13 @@ export function AuthProvider({ children }) {
     setUser(null)
     setRole(null)
     setClubId(null)
+    setClubName(null)
     setBranchId(null)
     setPlayerId(null)
   }
 
   return (
-    <AuthContext.Provider value={{ user, role, clubId, branchId, playerId, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, role, clubId, clubName, branchId, playerId, loading, signIn, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   )

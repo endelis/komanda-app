@@ -3,18 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/AuthContext'
 import { useSeason } from '../hooks/useSeason'
 import { useHomeData } from '../hooks/useHomeData'
+import { relativeDay, formatShort, formatCompact } from '../lib/date'
 import './HomePage.css'
-
-function formatEventDate(dateStr, t) {
-  const today = new Date().toISOString().slice(0, 10)
-  const tomorrow = new Date()
-  tomorrow.setDate(tomorrow.getDate() + 1)
-  const tomorrowStr = tomorrow.toISOString().slice(0, 10)
-
-  if (dateStr === today) return t('home.today')
-  if (dateStr === tomorrowStr) return t('home.tomorrow')
-  return new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short' }).format(new Date(dateStr))
-}
 
 function typeLabel(type, t) {
   const map = {
@@ -109,7 +99,7 @@ export default function HomePage() {
               <>
                 <p className="home-card__title">{nextTraining.name}</p>
                 <p className="home-card__sub">
-                  {formatEventDate(nextTraining.date, t)}
+                  {relativeDay(nextTraining.date, t)}
                   {nextTraining.time ? ` · ${nextTraining.time.slice(0, 5)}` : ''}
                 </p>
                 {nextTraining.location && (
@@ -127,9 +117,9 @@ export default function HomePage() {
               <p className="home-card__eyebrow">{t('home.tournament_soon')}</p>
               <p className="home-card__title">{nextTournament.name}</p>
               <p className="home-card__sub">
-                {formatEventDate(nextTournament.date, t)}
+                {relativeDay(nextTournament.date, t)}
                 {nextTournament.end_date && nextTournament.end_date !== nextTournament.date
-                  ? ` – ${formatEventDate(nextTournament.end_date, t)}`
+                  ? ` – ${relativeDay(nextTournament.end_date, t)}`
                   : ''}
               </p>
               {nextTournament.location && (
@@ -197,7 +187,7 @@ export default function HomePage() {
                   <div className="home-event-row__info">
                     <span className="home-event-row__name">{ev.name}</span>
                     <span className="home-event-row__meta">
-                      {typeLabel(ev.type, t)} · {formatEventDate(ev.date, t)}
+                      {typeLabel(ev.type, t)} · {relativeDay(ev.date, t)}
                       {ev.time ? ` · ${ev.time.slice(0, 5)}` : ''}
                     </span>
                     {ev.location && (
@@ -228,7 +218,7 @@ export default function HomePage() {
                     <div className="home-test-card__header">
                       <span className="home-test-card__name">{tr.tests.name}</span>
                       <span className="home-test-card__date">
-                        {new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' }).format(new Date(tr.tests.date))}
+                        {formatCompact(tr.tests.date)}
                       </span>
                     </div>
                     <div className="home-test-card__metrics">
@@ -268,7 +258,7 @@ export default function HomePage() {
                 return (
                   <div key={d} className="home-meas-hist-row">
                     <span className="home-meas-hist-row__date">
-                      {new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(d))}
+                      {formatShort(d)}
                     </span>
                     <div className="home-meas-hist-row__vals">
                       {row?.weight_kg != null && (

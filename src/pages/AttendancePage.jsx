@@ -6,6 +6,7 @@ import { usePlayers } from '../hooks/usePlayers'
 import { useSeason } from '../hooks/useSeason'
 import { useEvents } from '../hooks/useEvents'
 import { getAgeGroup } from '../lib/ageGroup'
+import { formatDate } from '../lib/date'
 import './AttendancePage.css'
 
 const STATUS_OPTS = [
@@ -14,13 +15,6 @@ const STATUS_OPTS = [
   { value: 'injured_sick', short: 'I', color: 'amber' },
   { value: 'excused',      short: 'E', color: 'blue'  },
 ]
-
-function formatDate(dateStr, locale) {
-  const d = new Date(dateStr + 'T00:00:00')
-  return d.toLocaleDateString(locale === 'lv' ? 'lv-LV' : 'en-GB', {
-    weekday: 'short', day: 'numeric', month: 'short',
-  })
-}
 
 // ─── Per-session expandable row ───────────────────────────────────────────────
 function SessionRow({ event, players, user, t, locale, canWrite }) {

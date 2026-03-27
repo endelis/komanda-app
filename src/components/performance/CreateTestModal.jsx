@@ -2,13 +2,14 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from '../../context/AuthContext'
+import { today } from '../../lib/date'
 
 export default function CreateTestModal({ branchId, seasonId, onClose, onSaved }) {
   const { t } = useTranslation()
   const { user } = useAuth()
 
   const [name, setName] = useState('')
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [date, setDate] = useState(today())
   const [metrics, setMetrics] = useState([{ name: '', unit: '' }])
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')

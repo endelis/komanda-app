@@ -7,6 +7,7 @@ import { useSeason } from '../hooks/useSeason'
 import { useAttendance } from '../hooks/useAttendance'
 import { getAgeGroup } from '../lib/ageGroup'
 import InviteParentModal from '../components/players/InviteParentModal'
+import { formatShort } from '../lib/date'
 import './PlayerProfilePage.css'
 
 async function fetchPlayerTests(playerId) {
@@ -189,7 +190,7 @@ export default function PlayerProfilePage() {
                   <div className="profile-test__header">
                     <span className="profile-test__name">{tr.tests.name}</span>
                     <span className="profile-test__date">
-                      {new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(tr.tests.date))}
+                      {formatShort(tr.tests.date)}
                     </span>
                   </div>
                   {(tr.tests.metrics ?? []).map(m => {
@@ -230,7 +231,7 @@ export default function PlayerProfilePage() {
             {measurements.map(m => (
               <div key={m.id} className="profile-meas-row">
                 <span className="profile-meas-row__date">
-                  {new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(m.date))}
+                  {formatShort(m.date)}
                 </span>
                 <div className="profile-meas-row__vals">
                   {m.weight_kg != null && (
@@ -247,7 +248,7 @@ export default function PlayerProfilePage() {
       </section>
 
       {showInviteParent && isCoach && (
-        <InviteParentModal onClose={() => setShowInviteParent(false)} />
+        <InviteParentModal playerId={player.id} onClose={() => setShowInviteParent(false)} />
       )}
     </div>
   )

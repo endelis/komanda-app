@@ -30,7 +30,7 @@ function navItems(role) {
 
 export default function AppShell({ children }) {
   const { t } = useTranslation()
-  const { role, signOut } = useAuth()
+  const { role, clubName, signOut } = useAuth()
   const navigate = useNavigate()
   const items = navItems(role)
 
@@ -45,6 +45,7 @@ export default function AppShell({ children }) {
         <div className="shell__logo">
           <span className="shell__mark">K</span>
           <span className="shell__wordmark">KOMANDA</span>
+          {clubName && <span className="shell__club-name">{clubName}</span>}
         </div>
 
         <nav className="shell__nav">

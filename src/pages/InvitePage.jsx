@@ -2,36 +2,31 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { getAgeGroup } from '../lib/ageGroup'
 import './AuthPage.css'
 import './InvitePage.css'
 
-const MAX_CHILDREN = 3
-
-// ─── Status machine ────────────────────────────────────────────
+// ─── Status machine ─────────────────────────────────────────
 // 'loading' → check both invite tables
 // 'invalid' → token not found or expired
 // 'used'    → already accepted
-// 'parent_step1' → create account (parent flow)
-// 'parent_step2' → claim children (parent flow)
-// 'coach_step1'  → set password (coach flow, existing behaviour)
+// 'parent'  → parent invite (one step: set password)
+// 'coach'   → coach invite (one step: set password + display name)
 
 export default function InvitePage() {
-  const { t }      = useTranslation()
-  const { token }  = useParams()
-  const navigate   = useNavigate()
+  const { t }     = useTranslation()
+  const { token } = useParams()
+  const navigate  = useNavigate()
 
-  const [status,    setStatus]    = useState('loading')
-  const [invite,    setInvite]    = useState(null)    // record from DB
-  const [inviteType, setInviteType] = useState(null)  // 'parent' | 'coach'
-  const [newUserId, setNewUserId] = useState(null)
+  const [status,     setStatus]     = useState('loading')
+  const [invite,     setInvite]     = useState(null)
+  const [inviteType, setInviteType] = useState(null) // 'parent' | 'coach'
 
   useEffect(() => {
     async function load() {
       // Check parent invites table first
       const { data: parentInvite } = await supabase
         .from('invites')
-        .select('id, invited_email, role, club_id, accepted_at, expires_at')
+        .select('id, invited_email, player_id, role, accepted_at, expires_at')
         .eq('token', token)
         .single()
 
@@ -40,7 +35,7 @@ export default function InvitePage() {
         if (new Date(parentInvite.expires_at) < new Date())  { setStatus('invalid'); return }
         setInvite(parentInvite)
         setInviteType('parent')
-        setStatus('parent_step1')
+        setStatus('parent')
         return
       }
 
@@ -56,45 +51,33 @@ export default function InvitePage() {
         if (new Date(coachInvite.expires_at) < new Date())  { setStatus('invalid'); return }
         setInvite(coachInvite)
         setInviteType('coach')
-        setStatus('coach_step1')
+        setStatus('coach')
         return
       }
 
       setStatus('invalid')
     }
-
     load()
   }, [token])
 
-  // ── Render ──────────────────────────────────────────────────
   if (status === 'loading') return <LoadingView />
   if (status === 'invalid') return <ErrorView msg={t('invite.invalid_token')} />
   if (status === 'used')    return <ErrorView msg={t('invite.already_accepted')} />
 
-  if (status === 'parent_step1') {
+  if (status === 'parent') {
     return (
-      <ParentStep1
+      <ParentSetPassword
         invite={invite}
-        onComplete={uid => { setNewUserId(uid); setStatus('parent_step2') }}
-      />
-    )
-  }
-
-  if (status === 'parent_step2') {
-    return (
-      <ParentStep2
-        invite={invite}
-        userId={newUserId}
         onComplete={() => navigate('/home')}
       />
     )
   }
 
-  if (status === 'coach_step1') {
+  if (status === 'coach') {
     return (
       <CoachSetPassword
         invite={invite}
-        onComplete={role => navigate(role === 'superadmin' ? '/admin' : '/team')}
+        onComplete={() => navigate('/team')}
       />
     )
   }
@@ -102,26 +85,12 @@ export default function InvitePage() {
   return null
 }
 
-// ─── Shared UI atoms ───────────────────────────────────────────
+// ─── Shared UI atoms ──────────────────────────────────────────
 function Logo() {
   return (
     <div className="auth-card__logo">
       <span className="auth-card__mark">K</span>
       <span className="auth-card__wordmark">KOMANDA</span>
-    </div>
-  )
-}
-
-function StepDots({ step }) {
-  return (
-    <div className="invite-steps">
-      <span className={`invite-steps__step${step > 1 ? ' invite-steps__step--done' : ' invite-steps__step--active'}`}>
-        {step > 1 ? '✓' : '1'}
-      </span>
-      <span className="invite-steps__line" />
-      <span className={`invite-steps__step${step === 2 ? ' invite-steps__step--active' : ''}`}>
-        2
-      </span>
     </div>
   )
 }
@@ -152,27 +121,29 @@ function ErrorView({ msg }) {
   )
 }
 
-// ─── Step 1 (Parent): create account ──────────────────────────
-function ParentStep1({ invite, onComplete }) {
+// ─── Parent: set password + auto-link to player ───────────────
+// The player_id is on the invite record — the parent never
+// sees or selects a player from a roster.
+function ParentSetPassword({ invite, onComplete }) {
   const { t } = useTranslation()
 
-  const [password,    setPassword]    = useState('')
-  const [confirm,     setConfirm]     = useState('')
-  const [error,       setError]       = useState(null)
-  const [submitting,  setSubmitting]  = useState(false)
+  const [password,   setPassword]   = useState('')
+  const [confirm,    setConfirm]    = useState('')
+  const [error,      setError]      = useState(null)
+  const [submitting, setSubmitting] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
-    if (password.length < 8)    { setError(t('invite.password_short'));    return }
-    if (password !== confirm)   { setError(t('invite.password_mismatch')); return }
+    if (password.length < 8)   { setError(t('invite.password_short'));    return }
+    if (password !== confirm)  { setError(t('invite.password_mismatch')); return }
 
     setSubmitting(true)
 
+    // 1. Create auth account (trigger assigns role='player' by default)
     const { data, error: signUpError } = await supabase.auth.signUp({
       email:    invite.invited_email,
       password,
-      options:  { data: { role: 'parent' } },
     })
 
     if (signUpError || !data.user) {
@@ -183,18 +154,24 @@ function ParentStep1({ invite, onComplete }) {
 
     const uid = data.user.id
 
-    // Set club_id on the user row so the parent_see_club_roster
-    // RLS policy can filter the player list in step 2.
-    // The handle_new_user trigger creates the row; we update club_id.
-    if (invite.club_id) {
-      await supabase
-        .from('users')
-        .update({ club_id: invite.club_id })
-        .eq('id', uid)
-    }
+    // 2. Set role to 'parent' — invite flow owns role assignment, not the trigger
+    await supabase.from('users').update({ role: 'parent' }).eq('id', uid)
+
+    // 3. Link this account to the specific player on the invite
+    await supabase.from('player_users').insert({
+      player_id:    invite.player_id,
+      user_id:      uid,
+      relationship: 'parent',
+    })
+
+    // 4. Mark invite accepted
+    await supabase
+      .from('invites')
+      .update({ accepted_at: new Date().toISOString() })
+      .eq('id', invite.id)
 
     setSubmitting(false)
-    onComplete(uid)
+    onComplete()
   }
 
   return (
@@ -203,7 +180,6 @@ function ParentStep1({ invite, onComplete }) {
         <Logo />
         <h1 className="auth-card__title">{t('invite.step1_title')}</h1>
         <p className="auth-card__subtitle">{t('invite.step1_subtitle')}</p>
-        <StepDots step={1} />
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-group">
@@ -250,7 +226,7 @@ function ParentStep1({ invite, onComplete }) {
               style={{ width: '100%' }}
               disabled={submitting}
             >
-              {submitting ? '…' : t('invite.step1_submit')}
+              {submitting ? '…' : t('invite.submit')}
             </button>
           </div>
         </form>
@@ -259,178 +235,28 @@ function ParentStep1({ invite, onComplete }) {
   )
 }
 
-// ─── Step 2 (Parent): claim children ──────────────────────────
-function ParentStep2({ invite, userId, onComplete }) {
-  const { t } = useTranslation()
-
-  const [players,    setPlayers]    = useState([])
-  const [loadingP,   setLoadingP]   = useState(true)
-  const [selected,   setSelected]   = useState(new Set())
-  const [submitting, setSubmitting] = useState(false)
-  const [error,      setError]      = useState(null)
-
-  useEffect(() => {
-    // Query players in the parent's club.
-    // The parent_see_club_roster RLS policy filters by users.club_id
-    // which we set in step 1. Only public fields are requested —
-    // no phone numbers or medical notes are ever fetched here.
-    supabase
-      .from('players')
-      .select('id, fname, lname, dob')
-      .is('archived_at', null)
-      .order('lname')
-      .then(({ data }) => {
-        setPlayers(data ?? [])
-        setLoadingP(false)
-      })
-  }, [])
-
-  function toggle(id) {
-    setSelected(prev => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else if (next.size < MAX_CHILDREN) {
-        next.add(id)
-      }
-      return next
-    })
-  }
-
-  async function handleConfirm() {
-    setSubmitting(true)
-    setError(null)
-
-    // Insert player_users for each selected player
-    if (selected.size > 0) {
-      const rows = [...selected].map(pid => ({
-        player_id:    pid,
-        user_id:      userId,
-        relationship: 'parent',
-      }))
-
-      const { error: linkErr } = await supabase
-        .from('player_users')
-        .insert(rows)
-
-      if (linkErr) {
-        setSubmitting(false)
-        setError(t('invite.error_generic'))
-        return
-      }
-    }
-
-    // Mark invite as accepted
-    await supabase
-      .from('invites')
-      .update({ accepted_at: new Date().toISOString() })
-      .eq('id', invite.id)
-
-    onComplete()
-  }
-
-  return (
-    <div className="auth-page">
-      <div className="auth-card auth-card--wide">
-        <Logo />
-        <h1 className="auth-card__title">{t('invite.step2_title')}</h1>
-        <p className="auth-card__subtitle">{t('invite.step2_subtitle')}</p>
-        <StepDots step={2} />
-
-        {loadingP ? (
-          <div>
-            {[1, 2, 3].map(i => (
-              <div
-                key={i}
-                className="skeleton"
-                style={{ height: '52px', borderRadius: '8px', marginBottom: '8px' }}
-              />
-            ))}
-          </div>
-        ) : players.length === 0 ? (
-          <p className="auth-card__subtitle">{t('invite.step2_empty')}</p>
-        ) : (
-          <>
-            {selected.size >= MAX_CHILDREN && (
-              <p className="invite-max-notice">{t('invite.max_children')}</p>
-            )}
-            <div className="invite-player-list">
-              {players.map(p => {
-                const isSel  = selected.has(p.id)
-                const maxed  = !isSel && selected.size >= MAX_CHILDREN
-                const ag     = getAgeGroup(p.dob)
-                return (
-                  <button
-                    key={p.id}
-                    type="button"
-                    className={`invite-player-row${isSel ? ' invite-player-row--selected' : ''}`}
-                    onClick={() => toggle(p.id)}
-                    disabled={maxed}
-                  >
-                    <span className="invite-player-row__check">
-                      {isSel ? '✓' : null}
-                    </span>
-                    <div className="invite-player-row__info">
-                      <span className="invite-player-row__name">
-                        {p.fname} {p.lname}
-                      </span>
-                      <span className="tag tag-gold">{ag}</span>
-                    </div>
-                  </button>
-                )
-              })}
-            </div>
-          </>
-        )}
-
-        {error && <p className="auth-card__error">{error}</p>}
-
-        <div className="invite-step2-footer">
-          <button
-            type="button"
-            className="btn btn--ghost"
-            onClick={handleConfirm}
-            disabled={submitting}
-          >
-            {t('invite.step2_skip')}
-          </button>
-          <button
-            type="button"
-            className="btn btn--gold"
-            onClick={handleConfirm}
-            disabled={submitting || selected.size === 0}
-          >
-            {submitting
-              ? '…'
-              : t('invite.step2_confirm', { count: selected.size })}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ─── Coach: set password (existing flow, preserved) ───────────
+// ─── Coach: set password + display name ───────────────────────
 function CoachSetPassword({ invite, onComplete }) {
   const { t } = useTranslation()
 
-  const [password,   setPassword]   = useState('')
-  const [confirm,    setConfirm]    = useState('')
-  const [error,      setError]      = useState(null)
-  const [submitting, setSubmitting] = useState(false)
+  const [displayName, setDisplayName] = useState('')
+  const [password,    setPassword]    = useState('')
+  const [confirm,     setConfirm]     = useState('')
+  const [error,       setError]       = useState(null)
+  const [submitting,  setSubmitting]  = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
     setError(null)
-    if (password.length < 8)   { setError(t('invite.password_short'));    return }
-    if (password !== confirm)  { setError(t('invite.password_mismatch')); return }
+    if (password.length < 8)  { setError(t('invite.password_short'));    return }
+    if (password !== confirm) { setError(t('invite.password_mismatch')); return }
 
     setSubmitting(true)
 
+    // 1. Create auth account (trigger assigns role='player' by default)
     const { data, error: signUpError } = await supabase.auth.signUp({
       email:    invite.invited_email,
       password,
-      options:  { data: { role: 'coach' } },
     })
 
     if (signUpError || !data.user?.id) {
@@ -441,23 +267,43 @@ function CoachSetPassword({ invite, onComplete }) {
 
     const uid = data.user.id
 
-    // Create coach_access entry
+    // 2. Set role='coach' + display_name — invite flow owns role assignment
+    await supabase.from('users').update({
+      role:         'coach',
+      display_name: displayName.trim() || null,
+    }).eq('id', uid)
+
+    // 3. Create coach_access entry scoped to the invited branch
     if (invite.branch_id) {
       await supabase.from('coach_access').insert({
-        user_id:    uid,
-        branch_id:  invite.branch_id,
-        age_group:  invite.age_group ?? null,
+        user_id:   uid,
+        branch_id: invite.branch_id,
+        age_group: invite.age_group ?? null,
       })
+
+      // 4. Derive club_id from the branch and set it on the user record.
+      //    After inserting coach_access, the coach can now read that branch
+      //    via the users_read_branches RLS policy.
+      const { data: ca } = await supabase
+        .from('coach_access')
+        .select('branches(club_id)')
+        .eq('user_id', uid)
+        .limit(1)
+        .single()
+
+      if (ca?.branches?.club_id) {
+        await supabase.from('users').update({ club_id: ca.branches.club_id }).eq('id', uid)
+      }
     }
 
-    // Mark coach invite accepted
+    // 5. Mark coach invite accepted
     await supabase
       .from('coach_invites')
       .update({ accepted_at: new Date().toISOString() })
       .eq('id', invite.id)
 
     setSubmitting(false)
-    onComplete('coach')
+    onComplete()
   }
 
   return (
@@ -480,6 +326,18 @@ function CoachSetPassword({ invite, onComplete }) {
             />
           </div>
           <div className="form-group">
+            <label className="form-label" htmlFor="c-name">{t('invite.display_name_label')}</label>
+            <input
+              id="c-name"
+              type="text"
+              className="form-input"
+              value={displayName}
+              onChange={e => setDisplayName(e.target.value)}
+              autoFocus
+              autoComplete="name"
+            />
+          </div>
+          <div className="form-group">
             <label className="form-label" htmlFor="c-pw">{t('invite.password')}</label>
             <input
               id="c-pw"
@@ -488,7 +346,6 @@ function CoachSetPassword({ invite, onComplete }) {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              autoFocus
               autoComplete="new-password"
             />
           </div>

@@ -201,6 +201,58 @@
   color: var(--text-muted);
 }
 
+/* Branch row inline edit */
+.admin-row--branch {
+  align-items: flex-start;
+  padding: 0.875rem 1.125rem;
+}
+
+.branch-name-input {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9375rem;
+  height: auto;
+  width: 100%;
+  max-width: 280px;
+}
+
+/* Club setup flow */
+.admin-setup {
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.admin-setup__notice {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+
+.admin-setup__notice--success {
+  border-color: var(--accent);
+}
+
+.admin-setup__notice-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem;
+}
+
+.admin-setup__notice-sub {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.admin-setup__footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
 @media (max-width: 768px) {
   .admin-page {
     padding: 1rem;

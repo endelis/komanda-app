@@ -23,10 +23,22 @@
 .shell__logo {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   padding: 0 1.25rem 1.5rem;
   border-bottom: 0.5px solid var(--border);
   margin-bottom: 0.75rem;
+}
+
+.shell__club-name {
+  width: 100%;
+  font-size: 0.6875rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  margin-top: -4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .shell__mark {
