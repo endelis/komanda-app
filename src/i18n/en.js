@@ -286,5 +286,8 @@ export default {
       admin: { title: 'Admin' },
       home:  { title: 'Home' },
     },
+    common: {
+      date_format: 'DD/MM/YYYY',
+    },
   },
 }

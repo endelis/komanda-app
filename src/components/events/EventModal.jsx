@@ -116,12 +116,14 @@ export default function EventModal({ event, branchId, seasonId, onClose, onSaved
               <label className="form-label" htmlFor="ev-date">{t('calendar.date')}</label>
               <input id="ev-date" type="date" className="form-input" value={form.date}
                 onChange={e => set('date', e.target.value)} required />
+              <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>{t('common.date_format')}</span>
             </div>
             {form.type === 'tournament' && (
               <div className="form-group">
                 <label className="form-label" htmlFor="ev-end">{t('calendar.end_date')}</label>
                 <input id="ev-end" type="date" className="form-input" value={form.end_date}
                   onChange={e => set('end_date', e.target.value)} />
+                <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>{t('common.date_format')}</span>
               </div>
             )}
           </div>

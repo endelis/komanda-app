@@ -286,5 +286,8 @@ export default {
       admin: { title: 'Administrācija' },
       home:  { title: 'Sākums' },
     },
+    common: {
+      date_format: 'DD/MM/GGGG',
+    },
   },
 }

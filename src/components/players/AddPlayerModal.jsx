@@ -177,6 +177,7 @@ export default function AddPlayerModal({ branchId, onClose, onSaved }) {
             <label className="form-label" htmlFor="dob">{t('player.dob')}</label>
             <input id="dob" type="date" className="form-input" value={form.dob}
               onChange={e => set('dob', e.target.value)} required />
+            <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>{t('common.date_format')}</span>
           </div>
 
           <div className="form-group">

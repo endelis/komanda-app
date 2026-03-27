@@ -52,6 +52,7 @@ export default function SeasonModal({ branchId, onClose, onSaved }) {
             value={startDate}
             onChange={e => setStartDate(e.target.value)}
           />
+          <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>{t('common.date_format')}</span>
         </div>
 
         <div className="form-group">
@@ -62,6 +63,7 @@ export default function SeasonModal({ branchId, onClose, onSaved }) {
             value={endDate}
             onChange={e => setEndDate(e.target.value)}
           />
+          <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>{t('common.date_format')}</span>
         </div>
 
         {error && <p className="admin-modal__error">{error}</p>}

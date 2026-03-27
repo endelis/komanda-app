@@ -59,6 +59,7 @@ export default function MeasurementsModal({ branchId, seasonId, players, onClose
             value={date}
             onChange={e => setDate(e.target.value)}
           />
+          <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>{t('common.date_format')}</span>
         </div>
 
         <div style={{ overflowX: 'auto' }}>

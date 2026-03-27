@@ -69,6 +69,7 @@ export default function CreateTestModal({ branchId, seasonId, onClose, onSaved }
             value={date}
             onChange={e => setDate(e.target.value)}
           />
+          <span style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', display: 'block', marginTop: '2px' }}>{t('common.date_format')}</span>
         </div>
 
         <div className="form-group">
